@@ -142,7 +142,7 @@ input[type="date"].edit{padding:6px 10px;}
   <div class="tabs">
     <button class="tbtn on" onclick="showTab('param',this)">⚙ Parámetros</button>
     <button class="tbtn"    onclick="showTab('precios',this)">💲 Precios</button>
-    <button class="tbtn"    onclick="showTab('pp4',this)">🌿 Pastura PP4</button>
+    <button class="tbtn"    onclick="showTab('pp4',this)">🌿 Pastura</button>
     <button class="tbtn"    onclick="showTab('verdeo',this)">🌱 Verdeo</button>
     <button class="tbtn"    onclick="showTab('silo',this)">🌽 Silo</button>
     <button class="tbtn"    onclick="showTab('soja',this)">🌾 Soja</button>
@@ -252,18 +252,17 @@ input[type="date"].edit{padding:6px 10px;}
 <!-- PP4 -->
 <div id="pane-pp4" class="pane">
   <div class="card">
-    <div class="card-hd" style="cursor:default"><span class="ttl">Parámetros Pastura PP4</span></div>
+    <div class="card-hd" style="cursor:default"><span class="ttl">Parámetros Pastura</span></div>
     <div class="card-bd"><div class="ig">
       <div class="field"><label>Vida Útil Pastura (años)</label><input class="edit" type="number" id="pp4_vida" value="4" step="1" min="1" max="8" oninput="renderPP4();recalc()"></div>
     </div></div>
   </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-    <p style="font-size:11.5px;color:var(--ink2)">Cada año con sus ítems propios. Precio desde tab Precios.</p>
-    <button class="add-btn" style="margin:0" onclick="addPP4Year()">+ Agregar año</button>
+  <div style="margin-bottom:10px">
+    <p style="font-size:11.5px;color:var(--ink2)">Los años se generan automáticamente según la Vida Útil. Cada año con sus ítems propios. Precio desde tab Precios.</p>
   </div>
   <div id="pp4-years"></div>
   <div class="card">
-    <div class="card-hd" style="cursor:default"><span class="ttl">Resumen PP4</span></div>
+    <div class="card-hd" style="cursor:default"><span class="ttl">Resumen Pastura</span></div>
     <div class="card-bd"><div class="summ-grid" id="pp4-summ"></div></div>
   </div>
 </div>
@@ -274,8 +273,9 @@ input[type="date"].edit{padding:6px 10px;}
     <div class="card-hd" style="cursor:default"><span class="ttl">Verdeo – Costo por ha</span></div>
     <div class="card-bd">
       <div class="ig" style="margin-bottom:14px">
-        <div class="field"><label>Sup. Rastrojo (ha)</label><input class="edit" type="number" id="rastrojo_ha" value="500" step="10" oninput="recalc()"></div>
+        <div class="field"><label>Sup. Verdeo (ha)</label><span class="calc" id="rastrojo_ha_display">—</span><span class="hint">= Vacas × días verdeo ÷ raciones/ha (desde Parámetros)</span></div>
       </div>
+      <input type="hidden" id="rastrojo_ha" value="500">
       <p style="font-size:11.5px;color:var(--ink2);margin-bottom:10px">Alquiler rastrojo en Precios → Alquileres.</p>
       <div class="itbl-wrap" id="vd-wrap"></div>
       <button class="add-btn" onclick="addVerdeoItem()">+ Ítem</button>
@@ -443,7 +443,6 @@ var PL = [
   // Insecticidas
   {g:'Insecticidas',     n:'Coragen',               u:'u$s/lt',        v:115,     m:'usd'},
   {g:'Insecticidas',     n:'Bifentrin 10%',         u:'u$s/lt',        v:9,       m:'usd'},
-  {g:'Insecticidas',     n:'Abamectina 10%',        u:'u$s/lt',        v:9.6,     m:'usd'},
   {g:'Insecticidas',     n:'Abamectina 1,8%',       u:'u$s/lt',        v:9.5,     m:'usd'},
   {g:'Insecticidas',     n:'Engeo',                 u:'u$s/lt',        v:30,      m:'usd'},
   // Coadyuvantes
@@ -539,19 +538,19 @@ var pp4Years=[
     {n:'Siembra',d:1},{n:'Pulverización',d:2},{n:'Desmalezadora',d:0},
     {n:'Glifosato 58%',d:3.3},{n:'2,4D',d:1.2},{n:'Preside',d:0.45},
     {n:'Semilla alfalfa',d:9},{n:'Semilla festuca',d:9},{n:'MAP',d:250},
-    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 10%',d:0.2},
+    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 1,8%',d:0.2},
   ]},
   {label:'Conservación 1',items:[
     {n:'Pulverización',d:1},{n:'Fertilización (labor)',d:1},{n:'Desmalezadora',d:1},
-    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 10%',d:0.2},{n:'Urea',d:150},{n:'Brodal',d:0.08},{n:'2,4DB',d:0.8},
+    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 1,8%',d:0.2},{n:'Urea',d:150},{n:'Brodal',d:0.08},{n:'2,4DB',d:0.8},
   ]},
   {label:'Conservación 2',items:[
     {n:'Pulverización',d:1},{n:'Fertilización (labor)',d:1},{n:'Desmalezadora',d:1},
-    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 10%',d:0.2},{n:'Urea',d:150},{n:'Brodal',d:0.08},{n:'2,4DB',d:0.8},
+    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 1,8%',d:0.2},{n:'Urea',d:150},{n:'Brodal',d:0.08},{n:'2,4DB',d:0.8},
   ]},
   {label:'Conservación 3',items:[
     {n:'Pulverización',d:1},{n:'Desmalezadora',d:1},
-    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 10%',d:0.2},{n:'Brodal',d:0.08},{n:'2,4DB',d:0.8},
+    {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 1,8%',d:0.2},{n:'Brodal',d:0.08},{n:'2,4DB',d:0.8},
   ]},
 ];
 function yTot(items){return items.reduce(function(s,it){var p=getPUSD(it.n);return s+(p!==null?p*it.d:0);},0);}
@@ -566,6 +565,15 @@ var pp4Cbs=['editPP4_0','editPP4_1','editPP4_2','editPP4_3','editPP4_4','editPP4
 
 function renderPP4(){
   var vida=Math.max(1,Math.min(8,fv('pp4_vida')||4));
+  // Ajustar años de conservación según vida útil
+  var targetConserv = vida - 1;
+  while(pp4Years.length - 1 < targetConserv){
+    var idx2 = pp4Years.length - 1;
+    pp4Years.push({label:'Conservación '+(idx2+1),items:JSON.parse(JSON.stringify(pp4Years[pp4Years.length-1].items))});
+  }
+  while(pp4Years.length - 1 > targetConserv && pp4Years.length > 1){
+    pp4Years.splice(pp4Years.length-1, 1);
+  }
   var alqPP=getPUSD('Alquiler')||0;
   var html='';
   pp4Years.forEach(function(yr,yi){
@@ -578,15 +586,15 @@ function renderPP4(){
       +'</div><div class="card-bd">'
       +'<div class="itbl-wrap">'+mkItemTbl(yr.items,cb)+'</div>'
       +'<button class="add-btn" onclick="pp4Years['+yi+'].items.push({n:\'\',d:0});renderPP4();recalc()">+ Ítem</button>'
-      +(yi>0?'<button class="add-btn" style="margin-left:6px;border-color:var(--r500);color:var(--r500)" onclick="pp4Years.splice('+yi+',1);renderPP4();recalc()">— Eliminar año</button>':'')
       +'</div></div>';
   });
   $('pp4-years').innerHTML=html;
   var implT=yTot(pp4Years[0].items);
-  var cYears=pp4Years.slice(1,vida);
+  var cYears=pp4Years.slice(1);
   var cTots=cYears.map(function(yr){return yTot(yr.items);});
   var cSum=cTots.reduce(function(a,b){return a+b;},0);
-  var amort=vida>0?implT/vida:0, cAvg=vida>0?cSum/vida:0;
+  var amort=vida>0?implT/vida:0;
+  var cAvg=cYears.length>0?cSum/cYears.length:0;
   var costHa=amort+cAvg+alqPP;
   window._pp4={amort:amort,conservAvg:cAvg,alqPP:alqPP,costHa:costHa,implT:implT};
   var sh='<div class="sbox"><label>Implantación</label><div class="sv">'+fmt(implT,2)+'</div><small>u$s/ha</small></div>';
@@ -768,7 +776,7 @@ function renderResultado(p,r,s){
     +'<tr><td class="ind">Toros <small>'+r.t_venta+' cab · '+fmtP(p.toro_compra)+'</small></td><td class="r neg">('+fmt(r.cmp_to,0)+')</td><td class="r neg">('+fmt(r.cmp_to/p.sup_pp,1)+')</td></tr>'
     +'<tr class="sub"><td style="font-weight:700">Ingreso Neto</td><td class="r num" style="font-weight:700">'+fmt(r.IN,0)+'</td><td class="r num" style="font-weight:700">'+fmt(r.IN/p.sup_pp,1)+'</td></tr>'
     +'<tr class="shd"><td colspan="3">Gastos</td></tr>'
-    +'<tr><td class="ind">Pastura PP4 <small>'+p.sup_pp+' ha @ '+fmt(pp4.costHa,2)+' u$s/ha</small></td><td class="r num">'+fmt(r.g_pp,0)+'</td><td class="r num">'+fmt(r.g_pp/p.sup_pp,1)+'</td></tr>'
+    +'<tr><td class="ind">Pastura <small>'+p.sup_pp+' ha @ '+fmt(pp4.costHa,2)+' u$s/ha</small></td><td class="r num">'+fmt(r.g_pp,0)+'</td><td class="r num">'+fmt(r.g_pp/p.sup_pp,1)+'</td></tr>'
     +(isV?'<tr><td class="ind">Verdeo <small>'+p.rastrojo_ha+' ha @ '+fmt(vd.costHa,2)+' u$s/ha</small></td><td class="r num">'+fmt(r.g_supl,0)+'</td><td class="r num">'+fmt(r.g_supl/p.sup_pp,1)+'</td></tr>'
          :'<tr><td class="ind">Silo <small>'+fmt(r.sup_silo,1)+' ha · '+fmt(r.tn_silo,1)+' tn @ '+fmt(r.costo_tn_silo,2)+' u$s/tn</small></td><td class="r num">'+fmt(r.g_supl,0)+'</td><td class="r num">'+fmt(r.g_supl/p.sup_pp,1)+'</td></tr>')
     +'<tr><td class="ind">Bloquer <small>'+fmt(p.bloquer_lt*1000,0)+' cc/cab/d · '+p.dias_pp+' días</small></td><td class="r num">'+fmt(r.g_bloquer,0)+'</td><td class="r num">'+fmt(r.g_bloquer/p.sup_pp,1)+'</td></tr>'
@@ -834,6 +842,9 @@ function recalc(){
   var _racHA = fv('raciones_ha_v')||1;
   var _supV  = _racHA > 0 ? (_vacas * _diasV / _racHA) : 0;
   if($('sup_verdeo_calc')) $('sup_verdeo_calc').textContent = fmt(_supV, 1) + ' ha';
+  // Sync rastrojo_ha hidden input and display with calculated verdeo surface
+  if($('rastrojo_ha')) $('rastrojo_ha').value = _supV;
+  if($('rastrojo_ha_display')) $('rastrojo_ha_display').textContent = fmt(_supV, 1) + ' ha';
   $('h_destete').textContent=fmt(p.destete*100,2)+'%';
   $('sanidad_calc').textContent=fmt(p.sanidad_cab,2)+' u$s/cab/año';
   renderPP4(); renderVerdeo(); renderSilo(); renderSojaImpl();
