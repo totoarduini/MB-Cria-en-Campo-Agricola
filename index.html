@@ -193,6 +193,10 @@ input[type="date"].edit{padding:6px 10px;}
         <div class="field"><label>Días Verdeo</label><span class="calc" id="v_dias_supl_c">—</span></div>
         <div class="field"><label>Total ciclo</label><span class="calc" id="v_dias_tot_c">—</span></div>
       </div>
+      <div class="ig" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <div class="field"><label>Raciones por ha de verdeo</label><input class="edit" type="number" id="raciones_ha_v" value="200" step="5" oninput="recalc()"><span class="hint">1 vaca = 1 ración/día</span></div>
+        <div class="field"><label>Sup. Verdeo calculada</label><span class="calc" id="sup_verdeo_calc">—</span><span class="hint">= Vacas × días verdeo ÷ raciones/ha</span></div>
+      </div>
     </div>
   </div>
 
@@ -302,7 +306,7 @@ input[type="date"].edit{padding:6px 10px;}
     <div class="card-hd" style="cursor:default"><span class="ttl">Soja – Planteo Técnico (Implantación)</span></div>
     <div class="card-bd">
       <div class="ig" style="margin-bottom:14px">
-        <div class="field"><label>Rendimiento (tn/ha)</label><input class="edit" type="number" id="soja_rend" value="4" step="0.1" oninput="recalc()"></div>
+        <div class="field"><label>Rendimiento (tn/ha)</label><input class="edit" type="number" id="soja_rend" value="3.2" step="0.1" oninput="recalc()"></div>
         <div class="field"><label>Gastos Com. (%)</label><input class="edit" type="number" id="soja_gastos_pct" value="4" step="0.5" oninput="recalc()"></div>
         <div class="field"><label>Cosecha (%)</label><input class="edit" type="number" id="soja_cosecha_pct" value="10" step="0.5" oninput="recalc()"></div>
       </div>
@@ -388,7 +392,7 @@ var PL = [
   {g:'Mercado',          n:'Flete Soja',            u:'u$s/tn',        v:33.04,   m:'usd'},
   // Alquiler ÚNICO → usado para PP, Silo y Soja
   {g:'Alquileres',       n:'Alquiler',              u:'qq/ha',         v:14,      m:'qq'},
-  {g:'Alquileres',       n:'Alquiler Rastrojo',     u:'qq/ha',         v:0,       m:'qq'},
+  {g:'Alquileres',       n:'Alquiler Rastrojo',     u:'qq/ha',         v:4,       m:'qq'},
   // Ternero
   {g:'Ternero',          n:'Ternero ≤175 kg',       u:'$/kg',          v:6905,    m:'pesos'},
   {g:'Ternero',          n:'Ternero 176–200 kg',    u:'$/kg',          v:6617,    m:'pesos'},
@@ -433,7 +437,7 @@ var PL = [
   {g:'Semillas',         n:'Semilla maíz',          u:'u$s/bolsa',     v:170,     m:'usd'},
   {g:'Semillas',         n:'Semilla Soja',          u:'u$s/kg',        v:0.75,    m:'usd'},
   {g:'Semillas',         n:'Inoculante',            u:'u$s/dosis',     v:5,       m:'usd'},
-  {g:'Semillas',         n:'Semilla agropiro',      u:'u$s/kg',        v:5,       m:'usd'},
+  {g:'Semillas',         n:'Semilla alfalfa',       u:'u$s/kg',        v:5,       m:'usd'},
   {g:'Semillas',         n:'Semilla festuca',       u:'u$s/kg',        v:5,       m:'usd'},
   {g:'Semillas',         n:'Semilla centeno',       u:'u$s/kg',        v:0.65,    m:'usd'},
   // Insecticidas
@@ -534,7 +538,7 @@ var pp4Years=[
   {label:'Implantación',items:[
     {n:'Siembra',d:1},{n:'Pulverización',d:2},{n:'Desmalezadora',d:0},
     {n:'Glifosato 58%',d:3.3},{n:'2,4D',d:1.2},{n:'Preside',d:0.45},
-    {n:'Semilla agropiro',d:9},{n:'Semilla festuca',d:9},{n:'MAP',d:250},
+    {n:'Semilla alfalfa',d:9},{n:'Semilla festuca',d:9},{n:'MAP',d:250},
     {n:'Bifentrin 10%',d:0.2},{n:'Abamectina 10%',d:0.2},
   ]},
   {label:'Conservación 1',items:[
@@ -824,9 +828,15 @@ function recalc(){
   var p=getP();
   calBar('v_entrada_pp','v_salida_pp','v_fin_supl','🌱 Verdeo','cal-bar-v','v_dias_pp_c','v_dias_supl_c','v_dias_tot_c');
   calBar('s_entrada_pp','s_salida_pp','s_fin_supl','🌽 Silo',  'cal-bar-s','s_dias_pp_c','s_dias_supl_c','s_dias_tot_c');
+  // Sup. Verdeo calculada
+  var _vacas = (fv('sup_pp')||0) * (fv('vc_ha')||0);
+  var _diasV = daysId('v_salida_pp','v_fin_supl');
+  var _racHA = fv('raciones_ha_v')||1;
+  var _supV  = _racHA > 0 ? (_vacas * _diasV / _racHA) : 0;
+  if($('sup_verdeo_calc')) $('sup_verdeo_calc').textContent = fmt(_supV, 1) + ' ha';
   $('h_destete').textContent=fmt(p.destete*100,2)+'%';
   $('sanidad_calc').textContent=fmt(p.sanidad_cab,2)+' u$s/cab/año';
-  renderPP4(); renderVerdeo(); renderSilo(); renderSojaImpl(); renderPreciosTab();
+  renderPP4(); renderVerdeo(); renderSilo(); renderSojaImpl();
   var s=calcSoja(p), r=calcCria(p);
   $('soja_quick').innerHTML='IB '+fmt(s.ib,1)+' − Flete '+fmt(s.flete,1)+' − Gastos '+fmt(s.gastos,1)+' − Impl. '+fmt(p.soja_impl,0)+' − Cosecha '+fmt(s.cosecha,1)+' − Alq. '+fmt(p.soja_alquiler,1)+' = <strong>'+fmt(s.MB,1)+' u$s/ha</strong>';
   renderResultado(p,r,s);
@@ -838,6 +848,7 @@ function showTab(n,btn){
   document.querySelectorAll('.tbtn').forEach(function(e){e.classList.remove('on');});
   $('pane-'+n).classList.add('on');
   btn.classList.add('on');
+  if(n==='precios') renderPreciosTab();
 }
 function toggleCard(hd){
   var bd=hd.nextElementSibling, open=!bd.classList.contains('col');
